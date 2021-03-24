@@ -1,8 +1,28 @@
 -------------------------------------------------------------------------------
 Test set: geocoding.AddressResolverTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.249 s <<< FAILURE! - in geocoding.AddressResolverTest
-nullUrl_throwsNullPointerException  Time elapsed: 0.243 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: Expected java.lang.NullPointerException to be thrown, but nothing was thrown.
-	at geocoding.AddressResolverTest.nullUrl_throwsNullPointerException(AddressResolverTest.java:63)
+Tests run: 3, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.284 s <<< FAILURE! - in geocoding.AddressResolverTest
+whenGoodAlboiGps_returnAddress  Time elapsed: 0.026 s  <<< ERROR!
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'get' method:
+    httpclient.get(
+    "http://open.mapquestapi.com/geocoding/v1/reverse?key=uXSAVwYWbf9tJmsjEGHKKAo0gOjZfBLQ&location=40.640661%2C-8.656688&includeRoadMetadata=true"
+);
+    -> at geocoding.AddressResolver.findAddressForLocation(AddressResolver.java:48)
+ - has following stubbing(s) with different arguments:
+    1. httpclient.get(
+    "http://open.mapquestapi.com/geocoding/v1/reverse?key=uXSAVwYWbf9tJmsjEGHKKAo0gOjZfBLQ&location=40.640661,%20-8.656688&includeRoadMetadata=true"
+);
+      -> at geocoding.AddressResolverTest.whenGoodAlboiGps_returnAddress(AddressResolverTest.java:31)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+	at geocoding.AddressResolverTest.whenGoodAlboiGps_returnAddress(AddressResolverTest.java:35)
 

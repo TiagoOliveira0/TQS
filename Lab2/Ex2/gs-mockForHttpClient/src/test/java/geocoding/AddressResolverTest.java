@@ -1,6 +1,7 @@
 package geocoding;
 
 import connection.ISimpleHttpClient;
+import connection.TqsBasicHttpClient;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -56,11 +57,11 @@ class AddressResolverTest {
         });
 
     }
+
     @Test
     public void nullUrl_throwsNullPointerException() throws IOException, URISyntaxException, ParseException {
-
         Assertions.assertThrows(NullPointerException.class, () ->{
-           httpclient.get(null);
+           new TqsBasicHttpClient().get(null);
         });
 
     }
