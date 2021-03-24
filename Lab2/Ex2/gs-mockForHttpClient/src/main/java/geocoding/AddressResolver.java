@@ -12,6 +12,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import javax.management.BadAttributeValueExpException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Formatter;
@@ -31,13 +32,16 @@ public class AddressResolver {
 
     public Address findAddressForLocation(double latitude, double longitude) throws URISyntaxException, IOException, ParseException, org.json.simple.parser.ParseException {
 
+
+        if(latitude<-90 || latitude>90 || longitude<-180 || longitude>180){
+            throw new IllegalArgumentException();
+        }
         String apiKey = ConfigUtils.getPropertyFromConfig("mapquest_key");
 
         URIBuilder uriBuilder = new URIBuilder("http://open.mapquestapi.com/geocoding/v1/reverse");
         uriBuilder.addParameter("key", apiKey);
         uriBuilder.addParameter("location", (new Formatter()).format(Locale.US, "%.6f,%.6f", latitude, longitude).toString());
         uriBuilder.addParameter("includeRoadMetadata", "true");
-
 
         System.err.println(" url is --> " + uriBuilder.build().toString() + " <--");
 

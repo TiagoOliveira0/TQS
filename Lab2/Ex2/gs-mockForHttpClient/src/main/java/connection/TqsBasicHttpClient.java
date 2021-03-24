@@ -22,6 +22,8 @@ public class TqsBasicHttpClient implements ISimpleHttpClient {
 
     @Override
     public String get(String url) throws IOException {
+        if(url == null)
+            throw new NullPointerException();
         CloseableHttpClient client = HttpClients.createDefault();
         HttpGet request = new HttpGet(url);
         CloseableHttpResponse response = client.execute(request);

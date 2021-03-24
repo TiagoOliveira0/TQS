@@ -1,15 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: geocoding.AddressResolverTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 1, Errors: 1, Skipped: 0, Time elapsed: 0.274 s <<< FAILURE! - in geocoding.AddressResolverTest
-whenGoodAlboiGps_returnAddress  Time elapsed: 0.264 s  <<< ERROR!
-java.lang.NullPointerException
-	at geocoding.AddressResolverTest.whenGoodAlboiGps_returnAddress(AddressResolverTest.java:34)
-
-whenBadCoordidates_throwBadArrayindex  Time elapsed: 0.004 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: Unexpected exception type thrown ==> expected: <javax.management.BadAttributeValueExpException> but was: <java.lang.NullPointerException>
-	at geocoding.AddressResolverTest.whenBadCoordidates_throwBadArrayindex(AddressResolverTest.java:45)
-Caused by: java.lang.NullPointerException
-	at geocoding.AddressResolverTest.lambda$whenBadCoordidates_throwBadArrayindex$0(AddressResolverTest.java:46)
-	at geocoding.AddressResolverTest.whenBadCoordidates_throwBadArrayindex(AddressResolverTest.java:45)
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.249 s <<< FAILURE! - in geocoding.AddressResolverTest
+nullUrl_throwsNullPointerException  Time elapsed: 0.243 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: Expected java.lang.NullPointerException to be thrown, but nothing was thrown.
+	at geocoding.AddressResolverTest.nullUrl_throwsNullPointerException(AddressResolverTest.java:63)
 

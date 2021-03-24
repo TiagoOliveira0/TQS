@@ -43,17 +43,27 @@ class AddressResolverTest {
     public void whenBadCoordidates_throwBadArrayindex() throws IOException, URISyntaxException, ParseException {
 
         AddressResolver resolver = new AddressResolver(httpclient);
-        Assertions.assertThrows(BadAttributeValueExpException.class, () ->{
+        Assertions.assertThrows(IllegalArgumentException.class, () ->{
             Address result = resolver.findAddressForLocation(91,-0);
         });
 
-        Assertions.assertThrows(BadAttributeValueExpException.class, () ->{
+        Assertions.assertThrows(IllegalArgumentException.class, () ->{
             Address result = resolver.findAddressForLocation(91,-181);
         });
 
-        Assertions.assertThrows(BadAttributeValueExpException.class, () ->{
+        Assertions.assertThrows(IllegalArgumentException.class, () ->{
             Address result = resolver.findAddressForLocation(89,-181);
         });
 
     }
+    @Test
+    public void nullUrl_throwsNullPointerException() throws IOException, URISyntaxException, ParseException {
+
+        Assertions.assertThrows(NullPointerException.class, () ->{
+           httpclient.get(null);
+        });
+
+    }
+
+
 }
