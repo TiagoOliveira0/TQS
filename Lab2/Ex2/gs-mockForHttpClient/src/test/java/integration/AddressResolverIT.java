@@ -37,15 +37,19 @@ public class AddressResolverIT {
 
         AddressResolver resolver = new AddressResolver(new TqsBasicHttpClient());
         Assertions.assertThrows(IllegalArgumentException.class, () ->{
-            Address result = resolver.findAddressForLocation(91,-0);
+            Address result = resolver.findAddressForLocation(91,0);
         });
 
         Assertions.assertThrows(IllegalArgumentException.class, () ->{
-            Address result = resolver.findAddressForLocation(91,-181);
+            Address result = resolver.findAddressForLocation(-91,0);
         });
 
         Assertions.assertThrows(IllegalArgumentException.class, () ->{
-            Address result = resolver.findAddressForLocation(89,-181);
+            Address result = resolver.findAddressForLocation(0,-181);
+        });
+
+        Assertions.assertThrows(IllegalArgumentException.class, () ->{
+            Address result = resolver.findAddressForLocation(0,181);
         });
 
     }
