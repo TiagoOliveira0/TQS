@@ -17,7 +17,7 @@ class SauceLabsHomePageTest {
     @BeforeEach
     void setup(){
         System.setProperty("webdriver.gecko.driver", "/opt/webdriver/bin/geckodriver");
-        WebDriver browser = new FirefoxDriver();
+        browser = new FirefoxDriver();
     }
 
     @AfterEach
