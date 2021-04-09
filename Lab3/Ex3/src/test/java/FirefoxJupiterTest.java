@@ -18,9 +18,8 @@ class FirefoxJupiterTest {
     }
 
     @Test
-    void testWithFirefox(FirefoxDriver firefoxDriver) {
+    void testWithFirefox(FirefoxDriver driver) {
         // Use Firefox in this test
-        FireFoxJupiterTest(new FirefoxDriver());
         driver.get("https://www.ua.pt");
         assertThat(driver.getTitle(), containsString("Universidade de Aveiro"));
     }
@@ -36,8 +35,6 @@ class FirefoxJupiterTest {
 
     @Test
     void testWithHeadlessBrowser(HtmlUnitDriver driver){
-        System.setProperty("webdriver.gecko.driver", "/opt/webdriver/bin/geckodriver");
-        FireFoxJupiterTest(new FirefoxDriver());
         driver.get("https://www.ua.pt");
         assertThat(driver.getTitle(), containsString("Universidade de Aveiro"));
     }
