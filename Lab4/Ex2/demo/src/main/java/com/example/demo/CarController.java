@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class CarController {
 
@@ -24,4 +26,10 @@ public class CarController {
         Car saved = carManagerService.save(c);
         return new ResponseEntity<>(saved, status);
     }
+
+    @GetMapping(path="/cars")
+    public List<Car> getAllEmployees() {
+        return carManagerService.getAllCars();
+    }
+
 }
