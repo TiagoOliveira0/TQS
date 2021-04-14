@@ -37,7 +37,7 @@ public class CarControllerTest {
         when( carManagerService.save(Mockito.any()) ).thenReturn(c1);
 
         mvc.perform(post("/cars").contentType(MediaType.APPLICATION_JSON).content(JsonUtil.toJson(c1)))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mark", is("ford")));
 
         verify(carManagerService, times(1)).save(Mockito.any());
@@ -55,8 +55,9 @@ public class CarControllerTest {
         given(carManagerService.getAllCars()).willReturn(allCars);
 
         mvc.perform(get("/cars").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(3))).andExpect(jsonPath("$[0].mark", is(c1.getMark()))).andExpect(jsonPath("$[1].mark", is(c2.getMark())))
-                .andExpect(jsonPath("$[2].name", is(c3.getMark())));
+                .andExpect(jsonPath("$[2].mark", is(c3.getMark())));
         verify(carManagerService, VerificationModeFactory.times(1)).getAllCars();
 
     }
+
 }

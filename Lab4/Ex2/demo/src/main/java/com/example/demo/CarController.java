@@ -32,4 +32,11 @@ public class CarController {
         return carManagerService.getAllCars();
     }
 
+    @GetMapping("/cars/{id}")
+    public ResponseEntity<Car> getCarById(Car c) {
+        HttpStatus status = HttpStatus.OK;
+        Car saved = carManagerService.getCarById(c.getId());
+        return new ResponseEntity<>(saved, status);
+    }
+
 }

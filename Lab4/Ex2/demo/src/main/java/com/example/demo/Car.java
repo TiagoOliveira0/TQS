@@ -1,9 +1,10 @@
 package com.example.demo;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Objects;
 
+@Entity
+@Table(name = "tqs_cars")
 public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -15,6 +16,10 @@ public class Car {
     public Car(String mark, String model) {
         this.mark=mark;
         this.model=model;
+    }
+
+    public Car() {
+
     }
 
 
@@ -40,5 +45,19 @@ public class Car {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Car car = (Car) o;
+        return Objects.equals(id, car.id) && Objects.equals(mark, car.mark) && Objects.equals(model, car.model);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, mark, model);
     }
 }
