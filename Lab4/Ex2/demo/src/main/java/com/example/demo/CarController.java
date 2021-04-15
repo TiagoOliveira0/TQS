@@ -27,7 +27,7 @@ public class CarController {
         return new ResponseEntity<>(saved, status);
     }
 
-    @GetMapping(path="/cars")
+    @GetMapping("/cars")
     public List<Car> getAllEmployees() {
         return carManagerService.getAllCars();
     }

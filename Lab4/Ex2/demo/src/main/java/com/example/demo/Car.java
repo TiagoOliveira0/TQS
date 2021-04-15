@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -10,8 +12,11 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotNull
     private String mark;
-    private String model ;
+
+    @NotNull
+    private String model;
 
     public Car(String mark, String model) {
         this.mark=mark;
@@ -59,5 +64,14 @@ public class Car {
     @Override
     public int hashCode() {
         return Objects.hash(id, mark, model);
+    }
+
+    @Override
+    public String toString() {
+        return "Car{" +
+                "id=" + id +
+                ", mark='" + mark + '\'' +
+                ", model='" + model + '\'' +
+                '}';
     }
 }

@@ -12,14 +12,15 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureTestDatabase
-public class EmployeeControllerApiTest {
+@TestPropertySource(properties = "application-integrationtest.properties")
+public class CarControllerApiTest {
     @LocalServerPort
     int randomServerPort;
 
@@ -27,20 +28,21 @@ public class EmployeeControllerApiTest {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private CarRepository repository;
+    private CarRepository carRepository;
 
     @AfterEach
     public void resetDb() {
-        repository.deleteAll();
+        carRepository.deleteAll();
     }
 
     @Test
     public void whenValidInput_thenCreateCar() {
         Car c1 = new Car("toyota", "yaris");
-        ResponseEntity<Car> entity = restTemplate.postForEntity("/employees", c1, Car.class);
 
-        List<Car> found = repository.findAll();
-        assertThat(found).extracting(Car::getMark).containsOnly("toyota");
+        ResponseEntity<Car> entity = restTemplate.postForEntity("/cars", c1, Car.class);
+
+        List<Car> found = carRepository.findAll();
+        assertThat(found).isEqualTo("toyota");
     }
 
     @Test
@@ -50,7 +52,7 @@ public class EmployeeControllerApiTest {
 
 
         ResponseEntity<List<Car>> response = restTemplate
-                .exchange("/employees", HttpMethod.GET, null, new ParameterizedTypeReference<List<Car>>() {
+                .exchange("/cars", HttpMethod.GET, null, new ParameterizedTypeReference<List<Car>>() {
                 });
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -61,6 +63,6 @@ public class EmployeeControllerApiTest {
 
     private void createTestEmployee(String mark, String model) {
         Car c = new Car(mark, model);
-        repository.saveAndFlush(c);
+        carRepository.saveAndFlush(c);
     }
 }

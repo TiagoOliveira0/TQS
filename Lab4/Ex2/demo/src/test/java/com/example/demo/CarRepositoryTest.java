@@ -18,7 +18,7 @@ public class CarRepositoryTest {
     private CarRepository carRepository;
 
     @Test
-    public void whenFindFordCarByName_thenReturnFordCar() {
+    public void whenFindFordCarByMark_thenReturnFordCar() {
         Car c1 = new Car("ford", "fiesta");
         entityManager.persistAndFlush(c1);
 

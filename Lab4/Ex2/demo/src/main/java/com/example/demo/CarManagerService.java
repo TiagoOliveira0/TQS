@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,15 +10,15 @@ import java.util.Optional;
 @Service
 public class CarManagerService {
 
+    @Autowired
     private CarRepository carRepository;
 
     public Car save(Car c){
-        this.carRepository.save(c);
-        return c;
+        return carRepository.save(c);
     }
 
     public List<Car> getAllCars() {
-        return this.carRepository.findAll();
+        return carRepository.findAll();
     }
 
     public Optional<Car> getCarDetails(long l){
