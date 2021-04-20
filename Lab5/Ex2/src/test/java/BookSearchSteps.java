@@ -50,7 +50,7 @@ public class BookSearchSteps {
 
     @Then("Book {int} should have the title {string}")
     public void book_should_have_the_title(Integer int1, String string) {
-        assertEquals(result.get(int1).getTitle(), string);
+        assertEquals(result.get(int1-1).getTitle(), string);
     }
 
     @When("the customer searches for books by {string}")
