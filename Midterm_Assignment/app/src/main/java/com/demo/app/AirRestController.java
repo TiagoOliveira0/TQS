@@ -1,47 +1,72 @@
 package com.demo.app;
 
+import org.apache.coyote.Response;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.AttributedString;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
 public class AirRestController {
 
-    @Value("${api.key}")
-    private String apiKey;
-
     @Autowired
-    private RestTemplate restTemplate;
+    private AirQualityService airQualityService;
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    @GetMapping(path="/")
+    public String getHomePage(){
+        return "HomePage";
     }
 
-    @GetMapping(path="/air_quality")
-    public JSONObject getAirqualitybyLocation(@RequestParam float lat, @RequestParam float lon) {
-
-        JSONObject json = restTemplate.getForObject("http://api.openweathermap.org/data/2.5/air_pollution?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey, JSONObject.class);
-
-        return json;
+    @GetMapping(path="/now")
+    public String getAirqualitybyLocation(@RequestParam float lat, @RequestParam float lon, Model model ){
+        model.addAttribute("Air", airQualityService.getAirByNow(lat, lon));
+        return "AirQualityNow";
     }
 
-    @GetMapping(path="/air_quality")
-    public JSONObject getAirqualitybyDay(@RequestParam float lat, @RequestParam float lon,@RequestParam int start, @RequestParam int end) {
+    @GetMapping(path="/byday")
+    public String getAirqualitybyDay(@RequestParam float lat, @RequestParam float lon, @RequestParam int start, @RequestParam int end, Model model){
+        try {
+            model.addAttribute("List<Air>", airQualityService.getAirByDay(lat,lon,start,end));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "AirQualityDays";
+    }
 
-        JSONObject json = restTemplate.getForObject("http://api.openweathermap.org/data/2.5/air_pollution/history?lat=" + lat + "&lon=" + lon + "&start=" + start + "&end=" + end + "&appid=" + apiKey, JSONObject.class);
+    @GetMapping(path="/AirQuality/now")
+    public ResponseEntity<Air> getAirqualitybyLocationAPI(@RequestParam float lat, @RequestParam float lon){
+        Air air = airQualityService.getAirByNow(lat,lon);
 
-        return json;
+        return new ResponseEntity<Air>(air,HttpStatus.OK);
+    }
+
+    @GetMapping(path="/AirQuality/byday")
+    public ResponseEntity<List<Air>> getAirqualitybyDayAPI(@RequestParam float lat, @RequestParam float lon, @RequestParam int start, @RequestParam int end){
+        List<Air> air = null;
+        try {
+            air = airQualityService.getAirByDay(lat,lon,start,end);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(air == null)
+            return new ResponseEntity<List<Air>>(air,HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<List<Air>>(air,HttpStatus.OK);
     }
 
 
 }
+
