@@ -4,6 +4,9 @@ import euromillions.CuponEuromillions;
 import euromillions.Dip;
 import euromillions.EuromillionsDraw;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class DemoMain {
 
     /**
@@ -11,9 +14,11 @@ public class DemoMain {
      */
     public static void main(String[] args) {
 
+        Logger logger = Logger.getLogger(Logger.class.getName());
+
         // played sheet
         CuponEuromillions thisWeek = new CuponEuromillions();
-        System.out.println("Betting with three random bets...");
+        logger.log(Level.INFO, "Betting with three random bets...");
         thisWeek.addDipToCuppon(Dip.generateRandomDip());
         thisWeek.addDipToCuppon(Dip.generateRandomDip());
         thisWeek.addDipToCuppon(Dip.generateRandomDip());
@@ -22,15 +27,23 @@ public class DemoMain {
         EuromillionsDraw draw = EuromillionsDraw.generateRandomDraw();
 
         //report results
-        System.out.println("You played:");
-        System.out.println(thisWeek.format());
+        logger.log(Level.INFO,"You played");
+        String s = thisWeek.format();
+        logger.log(Level.INFO, s);
 
-        System.out.println("Draw results:");
-        System.out.println(draw.getDrawResults().format());
+        logger.log(Level.INFO,"Draw results:");
 
-        System.out.println("Your score:");
+        s = draw.getDrawResults().format();
+        logger.log(Level.INFO,s);
+
+
+        logger.log(Level.INFO,"Your score:");
+
+
+
         for (Dip dip : draw.findMatches(thisWeek)) {
-            System.out.println(dip.format());
+            s=dip.format();
+            logger.log(Level.INFO,s);
 
         }
     }

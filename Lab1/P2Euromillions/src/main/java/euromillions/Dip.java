@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import sets.SetOfNaturals;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * A set of 5 numbers and 2 starts according to the Euromillions ranges.
@@ -16,10 +16,11 @@ public class Dip {
 
     private SetOfNaturals numbers;
     private SetOfNaturals starts;
-    private static final int Numer_Of_Numbers = 5;
-    private static final int Numer_Of_Starts = 2;
-    private static final int Max_Number_Value = 50;
-    private static final int Max_Starts_Value = 10;
+    private static final int NUMEROFNUMBERS = 5;
+    private static final int NUMEROFSTARTS = 2;
+    private static final int MAXNUMBERVALUE = 50;
+    private static final int MAXSTARTSVALUE = 10;
+    private static SecureRandom generator = new SecureRandom();
 
 
 
@@ -31,7 +32,7 @@ public class Dip {
     public Dip(int[] arrayOfNumbers, int[] arrayOfStarts) {
         this();
 
-        if (Numer_Of_Numbers == arrayOfNumbers.length && Numer_Of_Starts == arrayOfStarts.length) {
+        if (NUMEROFNUMBERS == arrayOfNumbers.length && NUMEROFSTARTS == arrayOfStarts.length) {
             numbers.add(arrayOfNumbers);
             starts.add(arrayOfStarts);
         } else {
@@ -49,21 +50,19 @@ public class Dip {
     }
 
     public static Dip generateRandomDip() {
-        Random generator = new Random();
+
 
         Dip randomDip = new Dip();
-        for (int i = 0; i < 5; ) {
-            int candidate = generator.nextInt(Max_Number_Value-1) + 1;
+        for (int i = 0; i < 5;i++) {
+            int candidate = generator.nextInt(MAXNUMBERVALUE -1) + 1;
             if (!randomDip.getNumbersColl().contains(candidate)) {
                 randomDip.getNumbersColl().add(candidate);
-                i++;
             }
         }
-        for (int i = 0; i < 2; ) {
-            int candidate = generator.nextInt(Max_Starts_Value-1) + 1;
+        for (int i = 0; i < 2;i++) {
+            int candidate = generator.nextInt(MAXSTARTSVALUE -1) + 1;
             if (!randomDip.getStarsColl().contains(candidate)) {
                 randomDip.getStarsColl().add(candidate);
-                i++;
             }
         }
         return randomDip;
