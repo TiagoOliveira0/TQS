@@ -10,5 +10,7 @@ public interface AirQualityService {
 
     public Air getAirByNow(float lat, float lon);
 
-    public List<Air> getAirByDay(float lat, float lon, int start, int end) throws JSONException;
+    public List<Air> getAirNextDays(float lat, float lon);
+
+    public List<Air> getAirLastDays(float lat, float lon);
 }
