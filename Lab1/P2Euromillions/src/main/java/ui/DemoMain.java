@@ -14,7 +14,7 @@ public class DemoMain {
      */
     public static void main(String[] args) {
 
-        Logger logger = Logger.getLogger(Logger.class.getName());
+        Logger logger = Logger.getLogger(DemoMain.class.getName());
 
         // played sheet
         CuponEuromillions thisWeek = new CuponEuromillions();

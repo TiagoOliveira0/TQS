@@ -8,19 +8,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@Service
 class Cache implements CacheService{
-    private static long avg;
-    private static long count;
-    private static long created;
-    private static long max;
-    private static long min;
-    private static Map<Map<String, List<Air>>, Long> map = new HashMap<Map<String, List<Air>>, Long>();
+    private long avg;
+    private long count;
+    private long created;
+    private long max;
+    private long min;
+    private Map<Map<City, List<Air>>, Long> map = new HashMap<>();
 
     public Cache() {
         created = System.nanoTime();
-        this.min = 10000000000L;
-        this.max = 10000000000L;
+        min = 10000000000L;
+        max = 10000000000L;
         avg = (min + max) / 2;
     }
 
@@ -32,28 +31,42 @@ class Cache implements CacheService{
         avg = (min + max) / 2;
     }
 
-    public static boolean add(Map<String, List<Air>> e) {
-        String city = null;
-        for (Iterator<Map.Entry<String, List<Air>>> it = e.entrySet().iterator(); it.hasNext();) {
+    public boolean add(Map<City, List<Air>> e) {
+        City city = null;
+        for (Iterator<Map.Entry<City, List<Air>>> it = e.entrySet().iterator(); it.hasNext();) {
             city = it.next().getKey();
         }
 
         boolean result = false;
 
-        if(!Cache.contains(city) && city!=null) {
+        if(!this.containsCity(city.getCity()) && city!=null) {
             map.put(e, Long.valueOf(System.nanoTime()));
-            if(Cache.contains(city))
+            if(this.containsCity(city.getCity()))
                 result=true;
         }
         onAccess();
         return result;
     }
 
-    public static boolean contains(String city) {
-        for (Iterator<Map.Entry<Map<String, List<Air>>, Long>> it = map.entrySet().iterator(); it.hasNext();) {
-            Map<String, List<Air>> resultados = it.next().getKey();
-            for(String i: resultados.keySet()){
-                if(i.equals(city))
+    public boolean containsCity(String city) {
+        onAccess();
+        for (Iterator<Map.Entry<Map<City, List<Air>>, Long>> it = map.entrySet().iterator(); it.hasNext();) {
+            Map<City, List<Air>> resultados = it.next().getKey();
+            for(City i: resultados.keySet()){
+                if(i.getCity().equals(city))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean containsInfo(String city) {
+        onAccess();
+        for (Iterator<Map.Entry<Map<City, List<Air>>, Long>> it = map.entrySet().iterator(); it.hasNext();) {
+            Map<City, List<Air>> resultados = it.next().getKey();
+            for(City i: resultados.keySet()){
+                if(i.getCity().equals(city) && resultados.get(i).size()!=0)
                     return true;
             }
         }
@@ -63,11 +76,11 @@ class Cache implements CacheService{
 
     public List<Air> getValue(String city){
         onAccess();
-        if(Cache.contains(city)){
-            for (Iterator<Map.Entry<Map<String, List<Air>>, Long>> it = map.entrySet().iterator(); it.hasNext();) {
-                Map<String, List<Air>> resultados = it.next().getKey();
-                for(String i: resultados.keySet()){
-                    if(i.equals(city))
+        if(this.containsCity(city) && this.containsInfo(city)){
+            for (Iterator<Map.Entry<Map<City, List<Air>>, Long>> it = map.entrySet().iterator(); it.hasNext();) {
+                Map<City, List<Air>> resultados = it.next().getKey();
+                for(City i: resultados.keySet()){
+                    if(i.getCity().equals(city))
                         return resultados.get(i);
                 }
             }
@@ -77,10 +90,24 @@ class Cache implements CacheService{
 
     }
 
-    private static void onAccess() {
+    public City getCity(String city){
+        onAccess();
+        if(this.containsCity(city)){
+            for (Iterator<Map.Entry<Map<City, List<Air>>, Long>> it = map.entrySet().iterator(); it.hasNext();) {
+                Map<City, List<Air>> resultados = it.next().getKey();
+                for(City i: resultados.keySet()){
+                    if(i.getCity().equals(city))
+                        return i;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void onAccess() {
         count++;
         long now = System.nanoTime();
-        for (Iterator<Map.Entry<Map<String, List<Air>>, Long>> it = map.entrySet().iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<Map<City, List<Air>>, Long>> it = map.entrySet().iterator(); it.hasNext();) {
             long t = it.next().getValue();
             if (now > t + min && (now > t + max || now + (now - created) / count > t + avg)) {
                 it.remove();
@@ -92,5 +119,27 @@ class Cache implements CacheService{
     public String toString() {
         onAccess();
         return "Cache{"  + map.toString() + "}";
+    }
+
+    public long getAvg() {
+        return avg;
+    }
+
+    public long getMax() {
+        return max;
+    }
+
+    public void setMax(long max) {
+        this.avg = (this.min + max)/2;
+        this.max = max;
+    }
+
+    public long getMin() {
+        return min;
+    }
+
+    public void setMin(long min) {
+        this.avg = (min + this.max)/2;
+        this.min = min;
     }
 }

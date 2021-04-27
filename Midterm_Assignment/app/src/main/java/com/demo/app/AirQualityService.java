@@ -8,9 +8,9 @@ import java.util.List;
 @Service
 public interface AirQualityService {
 
-    public Air getAirByNow(float lat, float lon);
+    public Air getAirByNow(City c);
 
-    public List<Air> getAirNextDays(float lat, float lon);
+    public List<Air> getAirNextDays(City c);
 
-    public List<Air> getAirLastDays(float lat, float lon);
+    public List<Air> getAirLastDays(City c);
 }

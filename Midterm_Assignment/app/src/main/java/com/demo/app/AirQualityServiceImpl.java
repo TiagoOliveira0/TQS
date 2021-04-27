@@ -2,7 +2,10 @@ package com.demo.app;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
@@ -12,10 +15,15 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AirQualityServiceImpl implements AirQualityService{
+
+    Logger logger = LoggerFactory.getLogger(AirQualityServiceImpl.class);
 
     @Value("${api1.key}")
     private String api1Key;
@@ -24,21 +32,22 @@ public class AirQualityServiceImpl implements AirQualityService{
     private RestTemplate restTemplate;
 
     @Autowired
-    private Cache cache;
+    private AirQualityGeoLocationService airQualityGeoLocationService;
 
     @Override
-    public Air getAirByNow(float lat, float lon) {
-
-        String json1 = restTemplate.getForObject("http://api.openweathermap.org/data/2.5/air_pollution?lat=" + lat + "&lon=" + lon + "&appid=" + api1Key, String.class);
+    public Air getAirByNow(City city) {
+        String json1 = restTemplate.getForObject("http://api.openweathermap.org/data/2.5/air_pollution?lat=" + city.getLat() + "&lon=" + city.getLon() + "&appid=" + api1Key, String.class);
 
         JSONObject json = null;
         try {
             json = new JSONObject(json1);
         } catch (JSONException e) {
+            logger.error("No JSON was found.");
             e.printStackTrace();
         }
 
         if(json==null){
+            logger.error("JSON not viable to convert into JSONObject.");
             return null;
         }
 
@@ -61,37 +70,40 @@ public class AirQualityServiceImpl implements AirQualityService{
             nh3 = Float.parseFloat(json.getJSONArray("list").getJSONObject(0).getJSONObject("components").getString("nh3"));
             co = Float.parseFloat(json.getJSONArray("list").getJSONObject(0).getJSONObject("components").getString("co"));
         } catch (JSONException e) {
+            logger.error("One of the JSON fields was null and so it was not possible to convert it.");
             e.printStackTrace();
         }
 
         if(no2!=null && no!=null && o3!=null && so2!=null && pm2_5!=null && pm10!=null && nh3!=null && co!=null){
-            return new Air(lat,lon,co,no,no2,o3,so2,pm2_5,pm10,nh3);
+            Air a = new Air(Float.parseFloat(city.getLat()),Float.parseFloat(city.getLon()),co,no,no2,o3,so2,pm2_5,pm10,nh3);
+            return a;
         }
 
         return new Air(0,0,0,0,0,0,0,0,0,0);
     }
 
     @Override
-    public List<Air> getAirNextDays(float lat, float lon){
-
+    public List<Air> getAirNextDays(City city){
         long now = Instant.now().getEpochSecond();
 
         Instant instant1 = Instant.ofEpochSecond(now);
 
-        Integer today = LocalDateTime.ofInstant(instant1, ZoneOffset.UTC).getDayOfYear();
+        int today = LocalDateTime.ofInstant(instant1, ZoneOffset.UTC).getDayOfYear();
 
-        Integer last = 0;
+        Integer last = null;
 
-        String json1 = restTemplate.getForObject("http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + api1Key, String.class);
+        String json1 = restTemplate.getForObject("http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + city.getLat() + "&lon=" + city.getLon() + "&appid=" + api1Key, String.class);
 
         JSONObject json = null;
         try {
             json = new JSONObject(json1);
         } catch (JSONException e) {
+            logger.error("No JSON found.");
             e.printStackTrace();
         }
 
         if(json==null){
+            logger.error("JSON was not viable to convert into JSONObject.");
             return null;
         }
 
@@ -102,10 +114,12 @@ public class AirQualityServiceImpl implements AirQualityService{
         try {
             tam = json.getJSONArray("list").length();
         } catch (JSONException e) {
+            logger.warn("JSON not viable to the convertion.");
             e.printStackTrace();
         }
 
         if(tam==0){
+            logger.warn("Request to the API came empty.");
             return null;
         }   
 
@@ -138,44 +152,51 @@ public class AirQualityServiceImpl implements AirQualityService{
                 day = LocalDateTime.ofInstant(instant, ZoneOffset.UTC).getDayOfYear();
 
             } catch (JSONException e) {
+                logger.error("JSONexcepetion trying to convert it.");
                 e.printStackTrace();
             }
 
-            if(last == 0 && day!=null){
+            if(last == null && day!=null){
                 last=day;
             }
 
             if(no2!=null && no!=null && o3!=null && so2!=null && pm2_5!=null && pm10!=null && nh3!=null && co!=null && day!=null && day!=last && day>today){
-                lista.add(new Air(lat,lon,co,no,no2,o3,so2,pm2_5,pm10,nh3));
+                lista.add(new Air(Float.parseFloat(city.getLat()),Float.parseFloat(city.getLon()),co,no,no2,o3,so2,pm2_5,pm10,nh3));
                 last=day;
             }
         }
 
-        return lista;
+        if(lista.size()!=0){
+            return lista;
+        }
+
+        logger.error("No data found.");
+        return null;
 
     }
 
     @Override
-    public List<Air> getAirLastDays(float lat, float lon) {
-
+    public List<Air> getAirLastDays(City c) {
         long now = Instant.now().getEpochSecond();
 
         Instant instant1 = Instant.ofEpochSecond(now);
 
-        Integer today = LocalDateTime.ofInstant(instant1, ZoneOffset.UTC).getDayOfYear();
+        int today = LocalDateTime.ofInstant(instant1, ZoneOffset.UTC).getDayOfYear();
 
-        Integer last = 0;
+        Integer last = null;
 
-        String json1 = restTemplate.getForObject("http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + api1Key, String.class);
+        String json1 = restTemplate.getForObject("http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + c.getLat() + "&lon=" + c.getLon() + "&appid=" + api1Key, String.class);
 
         JSONObject json = null;
         try {
             json = new JSONObject(json1);
         } catch (JSONException e) {
+            logger.error("JSONExcepetion trying to converting it.");
             e.printStackTrace();
         }
 
         if(json==null){
+            logger.error("JSON requested came null.");
             return null;
         }
 
@@ -186,10 +207,12 @@ public class AirQualityServiceImpl implements AirQualityService{
         try {
             tam = json.getJSONArray("list").length();
         } catch (JSONException e) {
+            logger.error("JSONException trying to get a parameter from it.");
             e.printStackTrace();
         }
 
         if(tam==0){
+            logger.error("JSON requested came null.");
             return null;
         }
 
@@ -222,20 +245,26 @@ public class AirQualityServiceImpl implements AirQualityService{
                 day = LocalDateTime.ofInstant(instant, ZoneOffset.UTC).getDayOfYear();
 
             } catch (JSONException e) {
+                logger.error("JSONException trying to convert its fields.");
                 e.printStackTrace();
             }
 
-            if(last == 0 && day!=null){
+            if(last == null && day!=null){
                 last=day;
             }
 
             if(no2!=null && no!=null && o3!=null && so2!=null && pm2_5!=null && pm10!=null && nh3!=null && co!=null && day!=null && day!=last && day<=today){
-                lista.add(new Air(lat,lon,co,no,no2,o3,so2,pm2_5,pm10,nh3));
+                lista.add(new Air(Float.parseFloat(c.getLat()),Float.parseFloat(c.getLon()),co,no,no2,o3,so2,pm2_5,pm10,nh3));
                 last=day;
             }
 
         }
 
-        return lista;
+        if(lista.size()!=0){
+            return lista;
+        }
+
+        logger.error("No data found in the request.");
+        return null;
     }
 }

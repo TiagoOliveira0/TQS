@@ -2,6 +2,8 @@ package com.demo.app;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class AirQualityGeoLocationServiceImpl implements AirQualityGeoLocationService{
+
+    Logger logger = LoggerFactory.getLogger(AirQualityGeoLocationServiceImpl.class);
 
     @Value("${api2.key}")
     private String api2Key;
@@ -43,9 +47,13 @@ public class AirQualityGeoLocationServiceImpl implements AirQualityGeoLocationSe
             e.printStackTrace();
         }
 
-        if(lat==null || lon==null)
-            return new City(null,null);
+        if(lat==null || lon==null) {
+            logger.error("OpencageData external api accessed to request the coordinates for the place called " + city + " but no coordinates were found.");
+            return new City(null, null);
+        }
 
+
+        logger.info("OpencageData external api accessed to request the coordinates for the place called " + city + ".");
         return new City(lat,lon,city);
     }
 }

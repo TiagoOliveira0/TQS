@@ -10,10 +10,4 @@ public class AirQualityConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
-
-    @Bean
-    public Cache Cache(){
-        return new Cache();
-    }
 }
