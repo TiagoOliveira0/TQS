@@ -11,13 +11,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -51,6 +49,7 @@ public class AirQualityServiceImpl implements AirQualityService{
             return null;
         }
 
+        String date = null;
         Float no2 = null;
         Float no = null;
         Float o3 = null;
@@ -61,6 +60,11 @@ public class AirQualityServiceImpl implements AirQualityService{
         Float co = null;
 
         try {
+
+            Float dt = Float.parseFloat(json.getJSONArray("list").getJSONObject(0).getString("dt"));
+            Date dte = new Date((long) (dt*1000L));
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
+            date = dateFormat.format(dte);
             no2 = Float.parseFloat(json.getJSONArray("list").getJSONObject(0).getJSONObject("components").getString("no2"));
             no = Float.parseFloat(json.getJSONArray("list").getJSONObject(0).getJSONObject("components").getString("no"));
             o3 = Float.parseFloat(json.getJSONArray("list").getJSONObject(0).getJSONObject("components").getString("o3"));
@@ -75,11 +79,11 @@ public class AirQualityServiceImpl implements AirQualityService{
         }
 
         if(no2!=null && no!=null && o3!=null && so2!=null && pm2_5!=null && pm10!=null && nh3!=null && co!=null){
-            Air a = new Air(Float.parseFloat(city.getLat()),Float.parseFloat(city.getLon()),co,no,no2,o3,so2,pm2_5,pm10,nh3);
+            Air a = new Air(date,Float.parseFloat(city.getLat()),Float.parseFloat(city.getLon()),co,no,no2,o3,so2,pm2_5,pm10,nh3);
             return a;
         }
 
-        return new Air(0,0,0,0,0,0,0,0,0,0);
+        return new Air("",0,0,0,0,0,0,0,0,0,0);
     }
 
     @Override
@@ -124,6 +128,7 @@ public class AirQualityServiceImpl implements AirQualityService{
         }   
 
         for(int i=0; i<tam;i++) {
+            String date = null;
             Float no2 = null;
             Float no = null;
             Float o3 = null;
@@ -136,6 +141,10 @@ public class AirQualityServiceImpl implements AirQualityService{
             Integer day = null;
 
             try {
+                Float dt = Float.parseFloat(json.getJSONArray("list").getJSONObject(i).getString("dt"));
+                Date dte = new Date((long) (dt*1000L));
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
+                date = dateFormat.format(dte);
                 no2 = Float.parseFloat(json.getJSONArray("list").getJSONObject(i).getJSONObject("components").getString("no2"));
                 no = Float.parseFloat(json.getJSONArray("list").getJSONObject(i).getJSONObject("components").getString("no"));
                 o3 = Float.parseFloat(json.getJSONArray("list").getJSONObject(i).getJSONObject("components").getString("o3"));
@@ -161,7 +170,7 @@ public class AirQualityServiceImpl implements AirQualityService{
             }
 
             if(no2!=null && no!=null && o3!=null && so2!=null && pm2_5!=null && pm10!=null && nh3!=null && co!=null && day!=null && day!=last && day>today){
-                lista.add(new Air(Float.parseFloat(city.getLat()),Float.parseFloat(city.getLon()),co,no,no2,o3,so2,pm2_5,pm10,nh3));
+                lista.add(new Air(date,Float.parseFloat(city.getLat()),Float.parseFloat(city.getLon()),co,no,no2,o3,so2,pm2_5,pm10,nh3));
                 last=day;
             }
         }
@@ -217,6 +226,7 @@ public class AirQualityServiceImpl implements AirQualityService{
         }
 
         for(int i=0; i<tam;i++) {
+            String date = null;
             Float no2 = null;
             Float no = null;
             Float o3 = null;
@@ -229,6 +239,10 @@ public class AirQualityServiceImpl implements AirQualityService{
             Integer day = null;
 
             try {
+                Float dt = Float.parseFloat(json.getJSONArray("list").getJSONObject(i).getString("dt"));
+                Date dte = new Date((long) (dt*1000L));
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy");
+                date = dateFormat.format(dte);
                 no2 = Float.parseFloat(json.getJSONArray("list").getJSONObject(i).getJSONObject("components").getString("no2"));
                 no = Float.parseFloat(json.getJSONArray("list").getJSONObject(i).getJSONObject("components").getString("no"));
                 o3 = Float.parseFloat(json.getJSONArray("list").getJSONObject(i).getJSONObject("components").getString("o3"));
@@ -254,7 +268,7 @@ public class AirQualityServiceImpl implements AirQualityService{
             }
 
             if(no2!=null && no!=null && o3!=null && so2!=null && pm2_5!=null && pm10!=null && nh3!=null && co!=null && day!=null && day!=last && day<=today){
-                lista.add(new Air(Float.parseFloat(c.getLat()),Float.parseFloat(c.getLon()),co,no,no2,o3,so2,pm2_5,pm10,nh3));
+                lista.add(new Air(date,Float.parseFloat(c.getLat()),Float.parseFloat(c.getLon()),co,no,no2,o3,so2,pm2_5,pm10,nh3));
                 last=day;
             }
 

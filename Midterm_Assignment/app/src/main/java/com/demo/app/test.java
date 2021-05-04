@@ -5,13 +5,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.cglib.core.internal.LoadingCache;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class test {
@@ -47,9 +45,16 @@ public class test {
 
         List<Air> dados = new ArrayList<>();
 
-        Air a1 = new Air(1,1,1,1,1,1,1,1,1,1);
-        Air a2 = new Air(2,2,2,2,2,2,2,2,2,2);
-        Air a3 = new Air(3,3,3,3,3,3,3,3,3,3);
+        Air a1 = new Air("",1,1,1,1,1,1,1,1,1,1);
+        Air a2 = new Air("",2,2,2,2,2,2,2,2,2,2);
+        Air a3 = new Air("",3,3,3,3,3,3,3,3,3,3);
+
+
+        Date date = new Date(1619905626*1000L); // convert seconds to milliseconds
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // the format of your date
+        String formattedDate = dateFormat.format(date);
+
+        System.out.print(formattedDate);
 
         dados.add(a1);
         dados.add(a2);

@@ -1,5 +1,7 @@
 package com.demo.app;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 public class Air {
@@ -13,9 +15,11 @@ public class Air {
     private float pm2_5;
     private float pm10;
     private float nh3;
+    private String date;
 
 
-    public Air(float lat, float lon, float co, float no, float no2, float o3, float so2, float pm2_5, float pm10, float nh3) {
+    public Air(String date,float lat, float lon, float co, float no, float no2, float o3, float so2, float pm2_5, float pm10, float nh3) {
+        this.date = date;
         this.lat = lat;
         this.lon = lon;
         this.co = co;
@@ -27,6 +31,7 @@ public class Air {
         this.pm10 = pm10;
         this.nh3 = nh3;
     }
+
 
 
     public float getLat() {
@@ -96,6 +101,13 @@ public class Air {
     public float getPm10() {
         return pm10;
     }
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public void setPm10(float pm10) {
         this.pm10 = pm10;
@@ -113,7 +125,8 @@ public class Air {
     @Override
     public String toString() {
         return "Air{" +
-                "lat=" + lat +
+                "date=" + date +
+                ", lat=" + lat +
                 ", lon=" + lon +
                 ", co=" + co +
                 ", no=" + no +
@@ -139,4 +152,5 @@ public class Air {
     public int hashCode() {
         return Objects.hash(lat, lon, co, no, no2, o3, so2, pm2_5, pm10, nh3);
     }
+
 }

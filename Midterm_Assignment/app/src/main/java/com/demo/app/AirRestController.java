@@ -5,18 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-@RestController
+@Controller
 public class AirRestController {
 
     Logger logger = LoggerFactory.getLogger(AirRestController.class);
@@ -33,7 +31,7 @@ public class AirRestController {
 
     private Cache cache3 = new Cache();
 
-    @GetMapping(path="/")
+    @GetMapping("/")
     public String getHomePage(){
         logger.info("Home page was accessed.");
         return "HomePage";
@@ -174,7 +172,7 @@ public class AirRestController {
         }
         else {
             logger.error("No city found.");
-            return new ResponseEntity<>(new Air(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Air("",0, 0, 0, 0, 0, 0, 0, 0, 0, 0), HttpStatus.NOT_FOUND);
         }
 
     }
